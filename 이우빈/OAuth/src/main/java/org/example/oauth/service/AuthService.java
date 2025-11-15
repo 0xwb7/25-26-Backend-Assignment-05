@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.oauth.common.Constants;
 import org.example.oauth.domain.user.Provider;
+import org.example.oauth.domain.user.RefreshToken;
 import org.example.oauth.domain.user.Role;
 import org.example.oauth.domain.user.User;
 import org.example.oauth.dto.TokenDto;
@@ -70,7 +71,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void logoutIfPresent(HttpServletRequest httpServletRequest) {
+    public void logout(HttpServletRequest httpServletRequest) {
         Cookie[] cookies = httpServletRequest.getCookies();
 
         if (cookies == null) {
@@ -94,5 +95,43 @@ public class AuthService {
         Long userId = tokenProvider.getUserIdFromToken(refreshToken);
         refreshTokenRepository.findByUserId(userId)
                 .ifPresent(refreshTokenRepository::delete);
+    }
+
+    @Transactional
+    public TokenDto refresh(String refreshToken, long rotateBeforeTime) {
+        if (!tokenProvider.validateToken(refreshToken)) {
+            throw new BadRequestException(ErrorMessage.INVALID_TOKEN);
+        }
+
+        Long userId = tokenProvider.getUserIdFromToken(refreshToken);
+        RefreshToken stored = refreshTokenRepository.findByUserId(userId)
+                .orElseThrow(() -> new BadRequestException(ErrorMessage.INVALID_TOKEN));
+
+        if (!refreshToken.equals(stored.getToken())) {
+            throw new BadRequestException(ErrorMessage.INVALID_TOKEN);
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException(ErrorMessage.NOT_EXIST_USER));
+
+        String newAccessToken = tokenProvider.createAccessToken(user.getId(), user.getRole().name());
+
+        long expirationTime = tokenProvider.parseClaim(refreshToken).getExpiration().getTime();
+        long remainTime = expirationTime - System.currentTimeMillis();
+
+        if (remainTime <= rotateBeforeTime) {
+            String newRefresh = tokenProvider.createRefreshToken(user.getId());
+            stored.updateRefreshToken(newRefresh);
+
+            return TokenDto.builder()
+                    .accessToken(newAccessToken)
+                    .refreshToken(newRefresh)
+                    .build();
+        } else {
+            return TokenDto.builder()
+                    .accessToken(newAccessToken)
+                    .refreshToken(null)
+                    .build();
+        }
     }
 }
