@@ -5,6 +5,7 @@ import org.example.oauth.common.Constants;
 import org.example.oauth.exception.ErrorMessage;
 import org.example.oauth.jwt.JwtFilter;
 import org.example.oauth.jwt.TokenProvider;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -27,6 +28,17 @@ public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
 
+    private static final String[] PUBLIC_PAGES = {
+            "/", "/index.html", "/signup.html",
+            "/login.html", "/myPage.html", "/posts.html",
+            "/post.html", "/createPost.html", "/admin.html"
+    };
+
+    private static final String[] PUBLIC_AUTH = {
+            "/auth/signup", "/auth/login", "/auth/logout",
+            "/auth/refresh", "/oauth2/**"
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -38,11 +50,9 @@ public class SecurityConfig {
                 .exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint()).accessDeniedHandler(accessDeniedHandler()))
                 .authorizeHttpRequests(a -> a
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/", "/index.html", "/favicon.ico", "/signup.html", "/login.html", "/myPage.html",
-                                "/assets/**", "/static/**", "/css/**", "/js/**", "/images/**", "/admin.html", "/post.html",
-                                "/posts.html", "/createPost.html").permitAll()
-                        .requestMatchers("/auth/signup", "/auth/login", "/auth/logout", "/auth/refresh").permitAll()
-                        .requestMatchers("/oauth2/**").permitAll()
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers(PUBLIC_PAGES).permitAll()
+                        .requestMatchers(PUBLIC_AUTH).permitAll()
                         .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
@@ -59,19 +69,19 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
-        return (req, res, ex) -> {
-            res.setStatus(401);
-            res.setContentType(Constants.CONTENT_TYPE);
-            res.getWriter().write(Constants.MESSAGE_INTRO + ErrorMessage.NEED_TO_AUTHORIZE.getMessage() + Constants.MESSAGE_OUTRO);
+        return (rehttpServletRequest, httpServletResponse, authenticationException) -> {
+            httpServletResponse.setStatus(401);
+            httpServletResponse.setContentType(Constants.CONTENT_TYPE);
+            httpServletResponse.getWriter().write(Constants.MESSAGE_INTRO + ErrorMessage.NEED_TO_AUTHORIZE.getMessage() + Constants.MESSAGE_OUTRO);
         };
     }
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
-        return (req, res, ex) -> {
-            res.setStatus(403);
-            res.setContentType(Constants.CONTENT_TYPE);
-            res.getWriter().write(Constants.MESSAGE_INTRO + ErrorMessage.ACCESS_DENY.getMessage() + Constants.MESSAGE_OUTRO);
+        return (httpServletRequest, httpServletResponse, accessDeniedException) -> {
+            httpServletResponse.setStatus(403);
+            httpServletResponse.setContentType(Constants.CONTENT_TYPE);
+            httpServletResponse.getWriter().write(Constants.MESSAGE_INTRO + ErrorMessage.ACCESS_DENY.getMessage() + Constants.MESSAGE_OUTRO);
         };
     }
 }

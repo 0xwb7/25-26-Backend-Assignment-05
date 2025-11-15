@@ -2,6 +2,7 @@ package org.example.oauth.controller.comment;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.oauth.common.Constants;
 import org.example.oauth.dto.comment.request.CommentCreateRequest;
 import org.example.oauth.dto.comment.request.CommentUpdateRequest;
 import org.example.oauth.dto.comment.response.CommentResponse;
@@ -30,7 +31,7 @@ public class CommentController {
         Long id = commentService.createComment(postId, commentCreateRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header("Location", "/posts/" + postId + "#comment-" + id)
+                .header(Constants.HEADER_NAME, Constants.POST_HEADER_VALUE + postId + "#comment-" + id)
                 .build();
     }
 

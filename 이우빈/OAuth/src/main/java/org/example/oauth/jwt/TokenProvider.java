@@ -104,6 +104,7 @@ public class TokenProvider {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
             return bearerToken.substring(BEARER.length());
         }
+
         return null;
     }
 

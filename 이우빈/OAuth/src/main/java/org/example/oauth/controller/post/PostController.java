@@ -2,6 +2,7 @@ package org.example.oauth.controller.post;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.oauth.common.Constants;
 import org.example.oauth.dto.post.request.PostCreateRequest;
 import org.example.oauth.dto.post.request.PostUpdateRequest;
 import org.example.oauth.dto.post.response.PostResponse;
@@ -31,7 +32,7 @@ public class PostController {
         Long id = postService.createPost(postCreateRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header("Location", "/posts/" + id)
+                .header(Constants.HEADER_NAME, Constants.POST_HEADER_VALUE + id)
                 .build();
     }
 

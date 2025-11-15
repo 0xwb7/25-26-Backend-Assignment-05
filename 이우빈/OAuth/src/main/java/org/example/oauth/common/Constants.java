@@ -10,4 +10,7 @@ public final class Constants {
     public static final Long TWO_WEEKS = 14L * 24 * 3600;
     public static final String HEADER_VALUE = "/index.html?loggedIn=google";
     public static final String REFRESH_TOKEN = "REFRESH_TOKEN";
+    public static final String HEADER_NAME = "Location";
+    public static final String POST_HEADER_VALUE = "/posts/";
+
 }
