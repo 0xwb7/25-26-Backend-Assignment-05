@@ -38,8 +38,9 @@ public class SecurityConfig {
                 .exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint()).accessDeniedHandler(accessDeniedHandler()))
                 .authorizeHttpRequests(a -> a
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/", "/index.html", "/favicon.ico", "/signup.html", "/login.html", "/mypage.html",
-                                "/assets/**", "/static/**", "/css/**", "/js/**", "/images/**", "/admin.html").permitAll()
+                        .requestMatchers("/", "/index.html", "/favicon.ico", "/signup.html", "/login.html", "/myPage.html",
+                                "/assets/**", "/static/**", "/css/**", "/js/**", "/images/**", "/admin.html", "/post.html",
+                                "/posts.html", "/createPost.html").permitAll()
                         .requestMatchers("/auth/signup", "/auth/login", "/auth/logout", "/auth/refresh").permitAll()
                         .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()

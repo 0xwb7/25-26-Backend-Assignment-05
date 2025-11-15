@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <link rel="stylesheet" href="/css/app.css">
+    <title>게시글</title>
+</head>
+<body>
+<h1>게시글 상세</h1>
+<nav>
+    <a href="/index.html">홈</a> |
+    <a href="/posts.html">목록</a> |
+    <a href="/login.html">로그인</a> |
+    <a href="/myPage.html">내 정보</a> |
+    <button id="logout">로그아웃</button>
+</nav>
+
+<section id="post-area">
+    <h3 id="p-title">제목</h3>
+    <div id="p-meta" style="font-size:12px;color:#666">작성자</div>
+    <pre id="p-content">내용</pre>
+</section>
+
+<section id="edit-area" style="display:none; margin-top:12px">
+    <label>제목
+        <input id="e-title" type="text" style="width:100%;max-width:720px">
+    </label><br>
+    <label>내용
+        <textarea id="e-content" rows="8" style="width:100%;max-width:720px"></textarea>
+    </label>
+</section>
+
+<section style="margin-top:8px">
+    <button id="edit">수정</button>
+    <button id="remove" style="margin-left:8px">삭제</button>
+</section>
+
+<h3>응답</h3>
+<pre id="out">Ready.</pre>
+
+<script src="/js/api.js"></script>
+<script>
+    document.getElementById('logout').onclick = AppAPI.logoutAndGoHome;
+
+    const params = new URLSearchParams(location.search);
+    const postId = params.get('id');
+    if (!postId) {
+        document.getElementById('post-area').innerHTML = '<div>잘못된 접근입니다.</div>';
+    }
+
+    async function loadPost() {
+        const r = await AppAPI.api('/posts/' + postId);
+        if (r.status !== 200 || !r.json) {
+            AppAPI.out(r);
+            document.getElementById('post-area').innerHTML = '<div>글을 불러올 수 없습니다.</div>';
+            return;
+        }
+        const p = r.json;
+        document.getElementById('p-title').textContent = p.title || '';
+        document.getElementById('p-meta').textContent = `작성자: ${escapeHtml(p.authorName || '')}`;
+        document.getElementById('p-content').textContent = p.content || '';
+        document.getElementById('e-title').value = p.title || '';
+        document.getElementById('e-content').value = p.content || '';
+    }
+
+    let editing = false;
+    document.getElementById('edit').onclick = async () => {
+        const ok = await AppAPI.requireAuth({redirectToLogin: true});
+        if (!ok) return;
+
+        if (!editing) {
+            editing = true;
+            document.getElementById('edit-area').style.display = 'block';
+            document.getElementById('edit').textContent = '수정';
+            return;
+        }
+
+        const title = document.getElementById('e-title').value.trim();
+        const content = document.getElementById('e-content').value.trim();
+        if (!title || !content) {
+            AppAPI.out({status: 400, text: '제목/내용을 입력하세요.'});
+            return;
+        }
+
+        const r = await AppAPI.api('/posts/' + postId, {
+            method: 'PATCH',
+            body: {title, content}
+        });
+
+        AppAPI.out(r);
+
+        const status = (r && typeof r.status === 'number') ? r.status : 0;
+        if (status >= 200 && status < 300) {
+            location.href = '/posts.html';
+            return;
+        }
+
+        if (!status && r && (r.ok === true || r.updated === true)) {
+            location.href = '/posts.html';
+        }
+    };
+
+    document.getElementById('remove').onclick = async () => {
+        const ok = await AppAPI.requireAuth({redirectToLogin: true});
+        if (!ok) {
+            return;
+        }
+        if (!confirm('이 글을 삭제할까요?')) {
+            return;
+        }
+
+        const r = await AppAPI.api('/posts/' + postId, {method: 'DELETE'});
+        AppAPI.out(r);
+        if (r.status === 204) location.href = '/posts.html';
+    };
+
+    (async () => {
+        await loadPost();
+        if (!AppAPI.getAccessToken()) {
+            const r = await fetch('/auth/refresh', {method: 'POST', credentials: 'include'});
+            if (r.ok) {
+                const j = await r.json();
+                AppAPI.setAccessToken(j.accessToken || null);
+            }
+        }
+    })();
+
+    function escapeHtml(s) {
+        return s == null ? '' : s.replace(/[&<>"']/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[c]);
+    }
+</script>
+</body>
+</html>
