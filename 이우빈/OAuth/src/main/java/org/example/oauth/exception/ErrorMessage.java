@@ -15,7 +15,11 @@ public enum ErrorMessage {
     INVALID_TOKEN("유효하지 않은 토큰입니다."),
     NO_REFRESH_TOKEN_IN_LOGIN("리프레시 토큰은 로그인에 사용할 수 없습니다."),
     NEED_TO_AUTHORIZE("인증이 필요합니다."),
-    ACCESS_DENY("접근 권한이 없습니다.");
+    ACCESS_DENY("접근 권한이 없습니다."),
+    EMAIL_ALREADY_REGISTERED_WITH_OTHER_PROVIDER("이미 존재하는 이메일입니다."),
+    OAUTH_CODE_EXCHANGE_FAILED("구글 인가 코드를 액세스 토큰 교환에 실패했습니다."),
+    OAUTH_PROFILE_FETCH_FAILED("구글 사용자 프로필을 불러오지 못했습니다."),
+    OAUTH_EMAIL_NOT_VERIFIED("구글 계정 이메일이 검증되지 않았습니다.");;
 
     private final String message;
 

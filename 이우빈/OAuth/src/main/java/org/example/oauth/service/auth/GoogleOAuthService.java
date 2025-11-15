@@ -58,10 +58,14 @@ public class GoogleOAuthService {
         String googleAccessToken = exchangeCodeForAccessToken(code);
         GoogleUserInfo profile = fetchUserInfo(googleAccessToken);
 
+        if (profile.getEmail() == null || Boolean.FALSE.equals(profile.getVerifiedEmail())) {
+            throw new BadRequestException(ErrorMessage.OAUTH_EMAIL_NOT_VERIFIED);
+        }
+
         User user = userRepository.findByEmail(profile.getEmail())
                 .map(u -> {
                     if (u.getProvider() != Provider.GOOGLE) {
-                        throw new BadRequestException(ErrorMessage.NOT_EXIST_USER);
+                        throw new BadRequestException(ErrorMessage.EMAIL_ALREADY_REGISTERED_WITH_OTHER_PROVIDER);
                     }
 
                     if (u.getProviderId() == null) {
@@ -95,8 +99,8 @@ public class GoogleOAuthService {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
 
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("code", code);
         form.add("client_id", googleOAuthProperties.getClientId());
         form.add("client_secret", googleOAuthProperties.getClientSecret());
@@ -107,7 +111,7 @@ public class GoogleOAuthService {
         ResponseEntity<GoogleTokenResponse> responseEntity = restTemplate.postForEntity(TOKEN_URL, entity, GoogleTokenResponse.class);
 
         if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null || responseEntity.getBody().getAccessToken() == null) {
-            throw new BadRequestException(ErrorMessage.NOT_EXIST_USER);
+            throw new BadRequestException(ErrorMessage.OAUTH_CODE_EXCHANGE_FAILED);
         }
 
         return responseEntity.getBody().getAccessToken();
@@ -118,7 +122,7 @@ public class GoogleOAuthService {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setBearerAuth(accessToken);
 
-        URI uri = UriComponentsBuilder.fromHttpUrl(USERINFO_URL)
+        URI uri = UriComponentsBuilder.fromUriString(USERINFO_URL)
                 .build(true)
                 .toUri();
 
@@ -126,7 +130,7 @@ public class GoogleOAuthService {
                 = restTemplate.exchange(new RequestEntity<Void>(httpHeaders, HttpMethod.GET, uri), GoogleUserInfo.class);
 
         if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null) {
-            throw new BadRequestException(ErrorMessage.NOT_EXIST_USER);
+            throw new BadRequestException(ErrorMessage.OAUTH_PROFILE_FETCH_FAILED);
         }
 
         return responseEntity.getBody();
