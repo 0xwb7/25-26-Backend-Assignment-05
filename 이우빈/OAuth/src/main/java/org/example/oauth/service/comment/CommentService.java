@@ -33,8 +33,7 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.NOT_EXIST_POST));
 
-        User author = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.NOT_EXIST_USER));
+        User author = userRepository.getReferenceById(userId);
 
         Comment comment = Comment.builder()
                 .post(post)
