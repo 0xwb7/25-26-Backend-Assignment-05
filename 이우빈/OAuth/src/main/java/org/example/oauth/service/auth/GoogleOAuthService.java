@@ -13,7 +13,6 @@ import org.example.oauth.exception.ErrorMessage;
 import org.example.oauth.repository.UserRepository;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +39,7 @@ public class GoogleOAuthService {
     private static final String AUTH_BASE = "https://accounts.google.com/o/oauth2/v2/auth";
     private static final String TOKEN_URL = "https://oauth2.googleapis.com/token";
     private static final String USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
+    private static final String BEARER = "Bearer ";
 
     public String buildAuthorizationUrl(String state) {
         return UriComponentsBuilder.fromHttpUrl(AUTH_BASE)
@@ -123,7 +123,7 @@ public class GoogleOAuthService {
 
         RequestEntity<Void> requestEntity = RequestEntity
                 .get(uri)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .header(HttpHeaders.AUTHORIZATION, BEARER + accessToken)
                 .build();
 
         ResponseEntity<GoogleUserInfo> responseEntity = restTemplate.exchange(requestEntity, GoogleUserInfo.class);

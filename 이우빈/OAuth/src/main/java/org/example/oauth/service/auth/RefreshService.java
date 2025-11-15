@@ -26,8 +26,9 @@ public class RefreshService {
 
         TokenDto result = authService.refresh(refreshToken, ROTATE_BEFORE_MS);
 
-        String setCookie =
-                (result.getRefreshToken() != null) ? CookieUtil.setRefreshCookie(result.getRefreshToken(), NEW_REFRESH_MAX_AGE) : null;
+        String setCookie = (result.getRefreshToken() != null)
+                ? CookieUtil.setRefreshCookie(result.getRefreshToken(), NEW_REFRESH_MAX_AGE)
+                : null;
 
         return new RefreshResponse(result.getAccessToken(), setCookie);
     }

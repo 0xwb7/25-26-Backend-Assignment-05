@@ -1,11 +1,9 @@
 package org.example.oauth.service.auth;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.oauth.common.Constants;
 import org.example.oauth.domain.user.Provider;
-import org.example.oauth.domain.user.RefreshToken;
 import org.example.oauth.domain.user.Role;
 import org.example.oauth.domain.user.User;
 import org.example.oauth.dto.TokenDto;
@@ -21,8 +19,6 @@ import org.example.oauth.util.RequestToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor
