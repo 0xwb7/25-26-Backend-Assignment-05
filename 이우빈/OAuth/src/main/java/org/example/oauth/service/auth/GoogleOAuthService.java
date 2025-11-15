@@ -35,6 +35,8 @@ public class GoogleOAuthService {
     private final UserRepository userRepository;
     private final TokenService tokenService;
 
+    private final RestTemplate restTemplate;
+
     private static final String AUTH_BASE = "https://accounts.google.com/o/oauth2/v2/auth";
     private static final String TOKEN_URL = "https://oauth2.googleapis.com/token";
     private static final String USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
@@ -96,7 +98,6 @@ public class GoogleOAuthService {
     }
 
     private String exchangeCodeForAccessToken(String code) {
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -118,7 +119,6 @@ public class GoogleOAuthService {
     }
 
     private GoogleUserInfo fetchUserInfo(String accessToken) {
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setBearerAuth(accessToken);
 

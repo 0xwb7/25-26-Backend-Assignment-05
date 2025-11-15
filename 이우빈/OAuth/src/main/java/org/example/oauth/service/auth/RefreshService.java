@@ -14,7 +14,7 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class RefreshService {
 
-    private final AuthService authService;   // 도메인 규칙(검증/회전/DB)을 담당
+    private final AuthService authService;
 
     private static final long ROTATE_BEFORE_MS = Duration.ofDays(3).toMillis();
     private static final long NEW_REFRESH_MAX_AGE = Duration.ofDays(7).getSeconds();
