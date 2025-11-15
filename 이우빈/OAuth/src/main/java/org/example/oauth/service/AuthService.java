@@ -7,6 +7,7 @@ import org.example.oauth.domain.user.User;
 import org.example.oauth.dto.TokenDto;
 import org.example.oauth.dto.user.request.LoginRequest;
 import org.example.oauth.dto.user.request.SignUpRequest;
+import org.example.oauth.dto.user.response.UserResponse;
 import org.example.oauth.exception.BadRequestException;
 import org.example.oauth.exception.ErrorMessage;
 import org.example.oauth.jwt.TokenProvider;
@@ -51,5 +52,13 @@ public class AuthService {
         }
 
         return tokenService.saveAndReturnToken(user.getId(), user.getRole().name());
+    }
+
+    @Transactional
+    public UserResponse myInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException(ErrorMessage.NOT_EXIST_USER));
+
+        return UserResponse.userInfo(user);
     }
 }
