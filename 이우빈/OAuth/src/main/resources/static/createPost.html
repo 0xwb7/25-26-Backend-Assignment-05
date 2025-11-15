@@ -31,39 +31,5 @@
 <pre id="out">Ready.</pre>
 
 <script src="/js/api.js"></script>
-<script>
-    (async () => {
-        const ok = await AppAPI.requireAuth({ redirectToLogin: true });
-        if (!ok) return;
-
-        document.getElementById('cancel').onclick = () => {
-            location.href = '/posts.html';
-        };
-
-        document.getElementById('save').onclick = async () => {
-            const title = document.getElementById('title').value.trim();
-            const content = document.getElementById('content').value.trim();
-
-            if (!title || !content) {
-                AppAPI.out({ status: 400, text: '제목/내용을 입력하세요.' });
-                return;
-            }
-
-            const r = await AppAPI.api('/posts', {
-                method: 'POST',
-                body: { title, content }
-            });
-
-            AppAPI.out(r);
-
-            const status = (r && typeof r.status === 'number') ? r.status : 0;
-            if (status >= 200 && status < 300) {
-                location.href = '/posts.html';
-            } else {
-                alert('작성에 실패했습니다.');
-            }
-        };
-    })();
-</script>
 </body>
 </html>

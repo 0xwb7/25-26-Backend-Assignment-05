@@ -19,15 +19,5 @@
 <pre id="out"></pre>
 
 <script src="/js/api.js"></script>
-<script>
-    document.querySelector('#signup').onclick = async () => {
-        const name = document.querySelector('#name').value.trim();
-        const email = document.querySelector('#email').value.trim();
-        const password = document.querySelector('#pw').value;
-        const r = await AppAPI.api('/auth/signup', {method: 'POST', body: {name, email, password}});
-        AppAPI.out(r);
-        if (r.status === 201) location.href = '/login.html';
-    };
-</script>
 </body>
 </html>

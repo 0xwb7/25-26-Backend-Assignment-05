@@ -26,17 +26,5 @@
 <pre id="out"></pre>
 
 <script src="/js/api.js"></script>
-<script>
-    document.querySelector('#login').onclick = async () => {
-        const email = document.querySelector('#email').value.trim();
-        const password = document.querySelector('#pw').value;
-        const r = await AppAPI.api('/auth/login', {method: 'POST', body: {email, password}});
-        AppAPI.out(r);
-        if (r.status === 200 && r.json) {
-            AppAPI.setAccessToken(r.json.accessToken || null);
-            location.href = '/index.html';
-        }
-    };
-</script>
 </body>
 </html>

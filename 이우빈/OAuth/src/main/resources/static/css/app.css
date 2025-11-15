@@ -62,3 +62,34 @@ pre {
     margin-left: 8px;
     font-size: 12px;
 }
+
+.meta {
+    color: #666;
+    font-size: 13px;
+    margin-top: 4px
+}
+
+.comment {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0
+}
+
+.comment .meta {
+    margin: 4px 0 8px
+}
+
+.comment-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px
+}
+
+.muted {
+    color: #888
+}
+
+.content {
+    white-space: pre-wrap
+}

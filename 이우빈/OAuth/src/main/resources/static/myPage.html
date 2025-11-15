@@ -14,12 +14,5 @@
 <pre id="out">Ready.</pre>
 
 <script src="/js/api.js"></script>
-<script>
-    AppAPI.bootstrapAfterGoogle();
-    document.querySelector('#load').onclick = async () => {
-        const r = await AppAPI.api('/auth/myInfo');
-        AppAPI.out(r);
-    };
-</script>
 </body>
 </html>

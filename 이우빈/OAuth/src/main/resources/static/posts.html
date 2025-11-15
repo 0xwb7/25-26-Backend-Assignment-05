@@ -23,50 +23,5 @@
 </section>
 
 <script src="/js/api.js"></script>
-<script>
-    document.getElementById('logout').onclick = AppAPI.logoutAndGoHome;
-
-    (async function load() {
-        if (!AppAPI.getAccessToken()) {
-            const r = await fetch('/auth/refresh', { method: 'POST', credentials: 'include' });
-            if (r.ok) {
-                const j = await r.json();
-                AppAPI.setAccessToken(j.accessToken || null);
-            }
-        }
-
-        const res = await AppAPI.api('/posts', { method: 'GET' });
-
-        const list = document.getElementById('list');
-        if (res.status !== 200 || !Array.isArray(res.json)) {
-            list.textContent = '목록을 불러오지 못했습니다.';
-            return;
-        }
-        if (res.json.length === 0) {
-            list.textContent = '게시글이 없습니다.';
-            return;
-        }
-
-        const frag = document.createDocumentFragment();
-        for (const p of res.json) {
-            const div = document.createElement('div');
-            div.style.margin = '8px 0';
-            const id = p.postId ?? p.id;
-            div.innerHTML = `
-        <a href="/post.html?id=${encodeURIComponent(id)}"><b>${escapeHtml(p.title)}</b></a>
-        <div style="font-size:12px;color:#666">작성자: ${escapeHtml(p.authorName ?? '')}</div>
-      `;
-            frag.appendChild(div);
-        }
-        list.innerHTML = '';
-        list.appendChild(frag);
-    })();
-
-    function escapeHtml(s) {
-        return s == null ? '' : s.replace(/[&<>"']/g, c => ({
-            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-        })[c]);
-    }
-</script>
 </body>
 </html>
