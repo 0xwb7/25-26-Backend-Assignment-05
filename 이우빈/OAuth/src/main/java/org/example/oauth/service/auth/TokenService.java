@@ -58,10 +58,10 @@ public class TokenService {
 
         String newAccess = tokenProvider.createAccessToken(user.getId(), user.getRole().name());
 
-        long expAt = tokenProvider.parseClaim(refreshToken).getExpiration().getTime();
-        long remaining = expAt - System.currentTimeMillis();
+        long expirationTime = tokenProvider.parseClaim(refreshToken).getExpiration().getTime();
+        long remainingTime = expirationTime - System.currentTimeMillis();
 
-        if (remaining <= rotateBeforeMs) {
+        if (remainingTime <= rotateBeforeMs) {
             String newRefresh = tokenProvider.createRefreshToken(user.getId());
             stored.updateRefreshToken(newRefresh);
 
