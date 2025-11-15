@@ -1,4 +1,4 @@
-package org.example.oauth.service;
+package org.example.oauth.service.auth;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

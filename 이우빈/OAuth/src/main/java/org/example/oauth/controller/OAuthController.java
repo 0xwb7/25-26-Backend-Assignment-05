@@ -3,7 +3,7 @@ package org.example.oauth.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.oauth.common.Constants;
 import org.example.oauth.dto.TokenDto;
-import org.example.oauth.service.GoogleOAuthService;
+import org.example.oauth.service.auth.GoogleOAuthService;
 import org.example.oauth.util.CookieUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;

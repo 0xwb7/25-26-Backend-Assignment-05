@@ -1,4 +1,4 @@
-package org.example.oauth.service;
+package org.example.oauth.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.example.oauth.config.GoogleOAuthProperties;
