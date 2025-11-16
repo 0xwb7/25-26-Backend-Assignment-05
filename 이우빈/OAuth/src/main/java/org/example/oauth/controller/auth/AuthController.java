@@ -48,10 +48,7 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(TokenDto.builder()
-                        .accessToken(token.getAccessToken())
-                        .refreshToken(token.getRefreshToken())
-                        .build());
+                .build();
     }
 
     @GetMapping("/myInfo")
