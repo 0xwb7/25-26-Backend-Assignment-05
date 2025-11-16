@@ -93,7 +93,8 @@
                 accessToken = j.accessToken || null;
                 out({
                     status: 200, json: {
-                        message: "Google 로그인 완료"
+                        message: "Google 로그인 완료",
+                        accessToken: accessToken
                     }
                 });
             } else {
