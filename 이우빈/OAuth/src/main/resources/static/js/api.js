@@ -91,7 +91,11 @@
             if (r.ok) {
                 const j = await r.json();
                 accessToken = j.accessToken || null;
-                out({status: 200, json: {message: "Google 로그인 완료"}});
+                out({
+                    status: 200, json: {
+                        message: "Google 로그인 완료"
+                    }
+                });
             } else {
                 out({status: r.status, text: "refresh 실패"});
             }
