@@ -2,8 +2,8 @@ package org.example.oauth.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.example.oauth.config.GoogleOAuthProperties;
-import org.example.oauth.domain.google.GoogleTokenResponse;
-import org.example.oauth.domain.google.GoogleUserInfo;
+import org.example.oauth.dto.google.GoogleTokenResponse;
+import org.example.oauth.dto.google.GoogleUserInfo;
 import org.example.oauth.domain.user.Provider;
 import org.example.oauth.domain.user.Role;
 import org.example.oauth.domain.user.User;

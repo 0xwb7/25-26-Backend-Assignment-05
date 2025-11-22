@@ -1,4 +1,4 @@
-package org.example.oauth.domain.google;
+package org.example.oauth.dto.google;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
