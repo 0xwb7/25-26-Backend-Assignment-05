@@ -47,10 +47,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public List<CommentResponse> getComments(Long postId) {
-        return commentRepository.findAll().stream()
-                .filter(comment -> comment.getPost().getId().equals(postId))
-                .map(CommentResponse::commentInfo)
-                .toList();
+        return commentRepository.findCommentResponsesByPostId(postId);
     }
 
     @Transactional

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.oauth.common.Constants;
 import org.example.oauth.dto.post.request.PostCreateRequest;
 import org.example.oauth.dto.post.request.PostUpdateRequest;
+import org.example.oauth.dto.post.response.PostListResponse;
 import org.example.oauth.dto.post.response.PostResponse;
 import org.example.oauth.service.post.PostService;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostResponse>> getAllPosts() {
+    public ResponseEntity<List<PostListResponse>> getAllPosts() {
         return ResponseEntity.ok(postService.listPosts());
     }
 

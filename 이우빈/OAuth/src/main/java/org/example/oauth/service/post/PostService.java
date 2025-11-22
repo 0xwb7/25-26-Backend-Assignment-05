@@ -5,6 +5,7 @@ import org.example.oauth.domain.post.Post;
 import org.example.oauth.domain.user.User;
 import org.example.oauth.dto.post.request.PostCreateRequest;
 import org.example.oauth.dto.post.request.PostUpdateRequest;
+import org.example.oauth.dto.post.response.PostListResponse;
 import org.example.oauth.dto.post.response.PostResponse;
 import org.example.oauth.exception.ErrorMessage;
 import org.example.oauth.exception.ForbiddenException;
@@ -49,10 +50,8 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponse> listPosts() {
-        return postRepository.findAll().stream()
-                .map(post -> PostResponse.postInfo(post, List.of()))
-                .toList();
+    public List<PostListResponse> listPosts() {
+        return postRepository.findPostList();
     }
 
     @Transactional
