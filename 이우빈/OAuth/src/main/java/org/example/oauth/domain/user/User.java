@@ -35,7 +35,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role = Role.ROLE_USER;
+    private Role role = Role.USER;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -58,7 +58,7 @@ public class User {
     @PrePersist
     void prePersist() {
         if (role == null) {
-            role = Role.ROLE_USER;
+            role = Role.USER;
         }
 
         if (provider == null) {

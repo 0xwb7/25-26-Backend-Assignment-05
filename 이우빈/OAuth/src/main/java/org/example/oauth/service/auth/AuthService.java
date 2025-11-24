@@ -40,7 +40,7 @@ public class AuthService {
                 .email(signUpRequest.getEmail())
                 .password(passwordEncoder.encode(signUpRequest.getPassword()))
                 .name(signUpRequest.getName())
-                .role(Role.ROLE_USER)
+                .role(Role.USER)
                 .provider(Provider.LOCAL)
                 .providerId(null)
                 .build());

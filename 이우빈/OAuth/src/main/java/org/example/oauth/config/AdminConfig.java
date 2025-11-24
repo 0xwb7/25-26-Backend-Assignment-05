@@ -29,7 +29,7 @@ public class AdminConfig {
                                     .name(ADMIN_NAME)
                                     .email(ADMIN_EMAIL)
                                     .password(passwordEncoder.encode(ADMIN_PASSWORD))
-                                    .role(Role.ROLE_ADMIN)
+                                    .role(Role.ADMIN)
                                     .build()
                     ));
         };

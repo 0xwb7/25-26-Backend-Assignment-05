@@ -88,7 +88,7 @@ public class GoogleOAuthService {
                         User.builder()
                                 .name(profile.getName())
                                 .email(profile.getEmail())
-                                .role(Role.ROLE_USER)
+                                .role(Role.USER)
                                 .provider(Provider.GOOGLE)
                                 .providerId(profile.getId())
                                 .build()

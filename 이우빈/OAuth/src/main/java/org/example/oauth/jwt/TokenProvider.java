@@ -32,6 +32,7 @@ public class TokenProvider {
     private static final String DELIMITER = ",";
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer ";
+    private static final String ROLE_PREFIX = "ROLE_";
 
     private final SecretKey key;
     private final long accessTokenValidityTime;
@@ -49,9 +50,13 @@ public class TokenProvider {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + accessTokenValidityTime);
 
+        String rawRole = (role != null && role.startsWith(ROLE_PREFIX))
+                ? role.substring(ROLE_PREFIX.length())
+                : role;
+
         return Jwts.builder()
                 .subject(userId.toString())
-                .claim(ROLE_CLAIM, role)
+                .claim(ROLE_CLAIM, rawRole)
                 .claim(TOKEN_TYPE, ACCESS_TOKEN)
                 .issuedAt(now)
                 .expiration(expiration)
@@ -80,11 +85,16 @@ public class TokenProvider {
             throw new BadRequestException(ErrorMessage.NO_REFRESH_TOKEN_IN_LOGIN);
         }
 
-        String role = claims.get(ROLE_CLAIM, String.class);
-        List<SimpleGrantedAuthority> authorities = Arrays.stream(role.split(DELIMITER))
-                .filter(StringUtils::hasText)
-                .map(SimpleGrantedAuthority::new)
-                .toList();
+        String roleClaim = claims.get(ROLE_CLAIM, String.class);
+
+        List<SimpleGrantedAuthority> authorities =
+                Arrays.stream(StringUtils.hasText(roleClaim) ? roleClaim.split(DELIMITER) : new String[0])
+                        .map(String::trim)
+                        .filter(StringUtils::hasText)
+                        .map(TokenProvider::toRole)
+                        .map(SimpleGrantedAuthority::new)
+                        .toList();
+
 
         return new UsernamePasswordAuthenticationToken(claims.getSubject(), "", authorities);
     }
@@ -121,5 +131,14 @@ public class TokenProvider {
     public Long getUserIdFromToken(String token) {
         Claims claims = parseClaim(token);
         return Long.parseLong(claims.getSubject());
+    }
+
+    private static String toRole(String role) {
+        if (!StringUtils.hasText(role)) {
+            return null;
+        }
+
+        String trimmed = role.trim();
+        return trimmed.startsWith(ROLE_PREFIX) ? trimmed : ROLE_PREFIX + trimmed;
     }
 }
