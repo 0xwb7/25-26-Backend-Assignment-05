@@ -16,13 +16,6 @@ public class GlobalExceptionHandler {
     private static final String MESSAGE = "message";
     private static final String ELSE_MESSAGE = "요청값이 유효하지 않습니다.";
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, Object>> runtimeExceptionHandler(RuntimeException e) {
-        Map<String, Object> body = new HashMap<>();
-        body.put(MESSAGE, e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
-    }
-
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> illegalArgumentExceptionHandler(IllegalArgumentException e) {
         Map<String, Object> body = new HashMap<>();
