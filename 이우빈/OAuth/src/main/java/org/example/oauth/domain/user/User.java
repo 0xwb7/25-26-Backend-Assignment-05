@@ -60,7 +60,7 @@ public class User {
     }
 
     @PrePersist
-    void prePersist() {
+    private void prePersist() {
         if (role == null) {
             role = Role.USER;
         }
