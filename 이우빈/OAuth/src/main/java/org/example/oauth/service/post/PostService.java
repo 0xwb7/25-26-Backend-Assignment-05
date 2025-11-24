@@ -63,12 +63,7 @@ public class PostService {
     @Transactional
     public void deletePost(Long postId) {
         Post post = validateUser(postId);
-
-        commentRepository.findAll()
-                .stream()
-                .filter(comment -> comment.getPost().getId().equals(postId))
-                .forEach(commentRepository::delete);
-
+        commentRepository.deleteByPostId(postId);
         postRepository.delete(post);
     }
 
