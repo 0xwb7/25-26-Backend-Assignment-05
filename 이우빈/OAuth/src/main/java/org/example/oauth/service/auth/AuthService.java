@@ -63,7 +63,13 @@ public class AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BadRequestException(ErrorMessage.NOT_EXIST_USER));
 
-        return UserResponse.userInfo(user);
+        return new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole().name(),
+                user.getProvider().name()
+        );
     }
 
     @Transactional

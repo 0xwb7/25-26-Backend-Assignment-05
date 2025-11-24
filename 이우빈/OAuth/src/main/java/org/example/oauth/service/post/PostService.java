@@ -46,7 +46,13 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.NOT_EXIST_POST));
 
-        return PostResponse.postInfo(post, List.of());
+        return new PostResponse(
+                post.getId(),
+                post.getAuthor().getId(),
+                post.getAuthor().getName(),
+                post.getTitle(),
+                post.getContent()
+        );
     }
 
     @Transactional(readOnly = true)
