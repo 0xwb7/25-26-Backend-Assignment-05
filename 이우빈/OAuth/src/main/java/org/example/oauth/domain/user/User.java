@@ -9,6 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +29,8 @@ public class User {
     @Column(nullable = false)
     private String name;
 
+    @Email
+    @NotBlank
     @Column(nullable = false, unique = true, length = 50)
     private String email;
 
