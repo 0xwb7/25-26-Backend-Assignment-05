@@ -79,7 +79,8 @@ public class AuthService {
         }
 
         Long userId = tokenProvider.getUserIdFromToken(refreshToken);
-        refreshTokenRepository.findByUserId(userId)
+        User user = userRepository.getReferenceById(userId);
+        refreshTokenRepository.findByUser(user)
                 .ifPresent(refreshTokenRepository::delete);
     }
 

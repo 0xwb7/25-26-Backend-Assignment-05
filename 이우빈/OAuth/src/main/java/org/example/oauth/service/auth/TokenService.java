@@ -10,6 +10,7 @@ import org.example.oauth.jwt.TokenProvider;
 import org.example.oauth.repository.RefreshTokenRepository;
 import org.example.oauth.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,17 +20,19 @@ public class TokenService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    @Transactional
     public TokenDto saveAndReturnToken(Long userId, String role) {
         String accessToken = tokenProvider.createAccessToken(userId, role);
         String refreshToken = tokenProvider.createRefreshToken(userId);
 
-        refreshTokenRepository.findByUserId(userId)
+        User user = userRepository.getReferenceById(userId);
+        refreshTokenRepository.findByUser(user)
                 .ifPresentOrElse(rt -> {
                             rt.updateRefreshToken(refreshToken);
                         },
                         () -> refreshTokenRepository.save(
                                 RefreshToken.builder()
-                                        .userId(userId)
+                                        .user(user)
                                         .token(refreshToken)
                                         .build()
                         ));
@@ -40,21 +43,22 @@ public class TokenService {
                 .build();
     }
 
+    @Transactional
     public TokenDto validateAndRotate(String refreshToken, long rotateBeforeMs) {
         if (!tokenProvider.validateToken(refreshToken)) {
             throw new BadRequestException(ErrorMessage.INVALID_TOKEN);
         }
 
         Long userId = tokenProvider.getUserIdFromToken(refreshToken);
-        RefreshToken stored = refreshTokenRepository.findByUserId(userId)
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException(ErrorMessage.NOT_EXIST_USER));
+
+        RefreshToken stored = refreshTokenRepository.findByUser(user)
                 .orElseThrow(() -> new BadRequestException(ErrorMessage.INVALID_TOKEN));
 
         if (!refreshToken.equals(stored.getToken())) {
             throw new BadRequestException(ErrorMessage.INVALID_TOKEN);
         }
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BadRequestException(ErrorMessage.NOT_EXIST_USER));
 
         String newAccess = tokenProvider.createAccessToken(user.getId(), user.getRole().name());
 
