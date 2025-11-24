@@ -27,7 +27,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
-    private final TokenService tokenService;
+    private final TokenManager tokenManager;
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
@@ -55,7 +55,7 @@ public class AuthService {
             throw new BadRequestException(ErrorMessage.WRONG_PASSWORD_INPUT);
         }
 
-        return tokenService.saveAndReturnToken(user.getId(), user.getRole().name());
+        return tokenManager.saveAndReturnToken(user.getId(), user.getRole().name());
     }
 
     @Transactional(readOnly = true)
@@ -92,6 +92,6 @@ public class AuthService {
 
     @Transactional
     public TokenDto refresh(String refreshToken, long rotateBeforeTime) {
-        return tokenService.validateAndRotate(refreshToken, rotateBeforeTime);
+        return tokenManager.validateAndRotate(refreshToken, rotateBeforeTime);
     }
 }

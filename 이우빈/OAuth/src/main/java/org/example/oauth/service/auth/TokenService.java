@@ -14,12 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class TokenService {
+public class TokenService implements TokenManager {
 
     private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    @Override
     @Transactional
     public TokenDto saveAndReturnToken(Long userId, String role) {
         String accessToken = tokenProvider.createAccessToken(userId, role);
@@ -43,6 +44,7 @@ public class TokenService {
                 .build();
     }
 
+    @Override
     @Transactional
     public TokenDto validateAndRotate(String refreshToken, long rotateBeforeMs) {
         if (!tokenProvider.validateToken(refreshToken)) {
